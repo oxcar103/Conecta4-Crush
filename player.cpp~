@@ -40,15 +40,12 @@ double Puntuacion(int jugador, const Environment &estado){
 double ValoracionTest(const Environment &estado, int jugador){
     int ganador = estado.RevisarTablero();
 
-    // Gana el jugador que pide la valoración
     if (ganador==jugador)
-       return MAX_INT;
-    // Pierde el jugador que pide la valoración
+       return MAX_INT;          // Gana el jugador que pide la valoracion
     else if (ganador!=0)
-            return MIN_INT;
-    // Hay un empate global y se ha rellenado completamente el tablero
+            return MIN_INT;     // Pierde el jugador que pide la valoracion
     else if (estado.Get_Casillas_Libres()==0)
-            return 0;
+            return 0;           // Hay un empate global y se ha rellenado completamente el tablero
     else
           return Puntuacion(jugador,estado);
 }
@@ -60,8 +57,7 @@ bool Player::HayHuecoVertical(const Environment &estado, int jugador, int row, i
 
     for(int i = row; i < row+4; i++){
         if(i >= 0 && i < 7){
-            // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-            valor_casilla = VerCasilla(estado, i, col)%3;
+            valor_casilla = VerCasilla(estado, i, col)%3;       // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
             hay_hueco = hay_hueco && (valor_casilla == 0 || valor_casilla == jugador);
         }
         else{
@@ -78,8 +74,7 @@ bool Player::HayHuecoHorizontal(const Environment &estado, int jugador, int row,
 
     for(int i = col; i < col+4; i++){
         if(i >= 0 && i < 7){
-            // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-            valor_casilla = VerCasilla(estado, row, i)%3;
+            valor_casilla = VerCasilla(estado, row, i)%3;       // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
             hay_hueco = hay_hueco && (valor_casilla == 0 || valor_casilla == jugador);
         }
         else{
@@ -96,8 +91,7 @@ bool Player::HayHuecoDiagonalAscendente(const Environment &estado, int jugador, 
 
     for(int i = 0; i < 4; i++){
         if((row+i) >= 0 && (row+i) < 7 && (col+i) >= 0 && (col+i) < 7){
-            // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-            valor_casilla = VerCasilla(estado, row+i, col+i)%3;
+            valor_casilla = VerCasilla(estado, row+i, col+i)%3; // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
             hay_hueco = hay_hueco && (valor_casilla == 0 || valor_casilla == jugador);
         }
         else{
@@ -114,8 +108,7 @@ bool Player::HayHuecoDiagonalDescendente(const Environment &estado, int jugador,
 
     for(int i = 0; i < 4; i++){
         if((row-i) >= 0 && (row-i) < 7 && (col+i) >= 0 && (col+i) < 7){
-            // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-            valor_casilla = VerCasilla(estado, row-i, col+i)%3;
+            valor_casilla = VerCasilla(estado, row-i, col+i)%3; // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
             hay_hueco = hay_hueco && (valor_casilla == 0 || valor_casilla == jugador);
         }
         else{
@@ -130,8 +123,7 @@ int Player::ContarVertical(const Environment &estado, int jugador, int row, int 
     int valor_casilla, fichas;
 
     for(int i = row; i < row+4; i++){
-        // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-        valor_casilla = VerCasilla(estado, i, col)%3;
+        valor_casilla = VerCasilla(estado, i, col)%3;           // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
         fichas += (valor_casilla == jugador)? 1: 0;
     }
 
@@ -142,8 +134,7 @@ int Player::ContarHorizontal(const Environment &estado, int jugador, int row, in
     int valor_casilla, fichas;
 
     for(int i = col; i < col+4; i++){
-        // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-        valor_casilla = VerCasilla(estado, row, i)%3;
+        valor_casilla = VerCasilla(estado, row, i)%3;           // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
         fichas += (valor_casilla == jugador)? 1: 0;
     }
 
@@ -154,8 +145,7 @@ int Player::ContarDiagonalAscendente(const Environment &estado, int jugador, int
     int valor_casilla, fichas;
 
     for(int i = 0; i < 4; i++){
-        // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-        valor_casilla = VerCasilla(estado, row+i, col+i)%3;
+        valor_casilla = VerCasilla(estado, row+i, col+i)%3;     // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
         fichas += (valor_casilla == jugador)? 1: 0;
     }
 
@@ -166,8 +156,7 @@ int Player::ContarDiagonalDescendente(const Environment &estado, int jugador, in
     int valor_casilla, fichas;
 
     for(int i = 0; i < 4; i++){
-        // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
-        valor_casilla = VerCasilla(estado, row-i, col+i)%3;
+        valor_casilla = VerCasilla(estado, row-i, col+i)%3;     // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
         fichas += (valor_casilla == jugador)? 1: 0;
     }
 
