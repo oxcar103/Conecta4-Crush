@@ -287,6 +287,7 @@ double Player::Valoracion(const Environment &estado, int jugador){
             for(int j = 0; j < 7; j++){
                 valor_casilla = VerCasilla(estado, i, j)%3; // Así agrupamos las fichas normales y la bomba del jugador en un mismo número
 
+                // La puntuación de un tablero es igual al número de tus puntos menos los de tu adversario
                 if(valor_casilla == jugador){
                     puntuacion += PuntosCasilla(estado, jugador, i, j);
                 }
@@ -385,7 +386,7 @@ Environment::ActionType Player::Think(){
     return accion;
 }
 
-//Método MiniMax
+// Método MiniMax
 double Player::MiniMax(const Environment & tablero, int jugador, int profundidad, const int MAX_PROFUNDIDAD, Environment::ActionType & accion){
     if (profundidad == MAX_PROFUNDIDAD || tablero.JuegoTerminado()){
         return Valoracion(tablero, jugador);
