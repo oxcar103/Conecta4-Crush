@@ -1,0 +1,236 @@
+%%
+% Plantilla de Memoria
+% Modificación de una plantilla de Latex de Nicolas Diaz para adaptarla 
+% al castellano y a las necesidades de escribir informática y matemáticas.
+%
+% Editada por: Mario Román
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%%
+
+%%%%%%%%%%%%%%%%%%%%%
+% Thin Sectioned Essay
+% LaTeX Template
+% Version 1.0 (3/8/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original Author:
+% Nicolas Diaz (nsdiaz@uc.cl) with extensive modifications by:
+% Vel (vel@latextemplates.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PAQUETES Y CONFIGURACIÓN DEL DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+%% Configuración del papel.
+% microtype: Tipografía.
+% mathpazo: Usa la fuente Palatino.
+\documentclass[a4paper, 11pt]{article}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage{mathpazo}
+
+% Indentación de párrafos para Palatino
+\setlength{\parindent}{0pt}
+  \parskip=8pt
+\linespread{1.05} % Change line spacing here, Palatino benefits from a slight increase by default
+
+
+%% Castellano.
+% noquoting: Permite uso de comillas no españolas.
+% lcroman: Permite la enumeración con numerales romanos en minúscula.
+% fontenc: Usa la fuente completa para que pueda copiarse correctamente del pdf.
+\usepackage[spanish,es-noquoting,es-lcroman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\selectlanguage{spanish}
+
+
+%% Matemáticas
+\usepackage{amsmath}
+
+
+%% Tablas
+\usepackage{multirow} 
+
+%Referencias
+\usepackage[hidelinks]{hyperref}
+
+\makeatletter
+
+%----------------------------------------------------------------------------------------
+%	TÍTULO
+%----------------------------------------------------------------------------------------
+% Configuraciones para el título.
+% El título no debe editarse aquí.
+\renewcommand{\maketitle}{
+  \begin{flushright} % Right align
+  
+  {\LARGE\@title} % Increase the font size of the title
+  
+  \vspace{50pt} % Some vertical space between the title and author name
+  
+  {\large\@author} % Author name
+  \\\@date % Date
+  \vspace{40pt} % Some vertical space between the author block and abstract
+  \end{flushright}
+}
+
+% Título
+\title{\textbf{Inteligencia Artificial}\\ % Title
+Métodos de búsqueda con adversarios: Conecta-4 Crush} % Subtitle
+
+\author{\textsc{Óscar Bermúdez Garrido} % Author
+\\{\textit{Universidad de Granada}}} % Institution
+
+\date{\today} % Date
+
+
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENTO
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Print the title section
+% Índice
+{\parskip=2pt
+  \tableofcontents
+}
+\pagebreak
+
+%% Inicio del documento
+
+\section{Análisis del problema}
+	El problema consiste en desarrollar una estrategia del juego Conecta-4 Crush, un juego similar
+	al clásico Conecta-4 pero con una ligera variante debida a la introducción de una ficha especial,
+	la $"$ficha bomba$"$.
+	
+	Esta ficha provoca una distorsión en su entorno si decide utilizarse su funcionalidad, lo que
+	provoca un cambio de mentalidad a la hora de la búsqueda de la estrategia para poder obtener
+	la victoria en este juego respecto a su predecesor.
+
+\section{Descripción de la solución planteada}
+	\subsection{Introducción}
+		El jugador de Conecta-4 Crush que he implementado para tomar sus decisiones se basa en
+		el \href{https://en.wikipedia.org/wiki/Alpha\%E2\%80\%93beta\_pruning}{algoritmo de poda
+		$\alpha$-$\beta$} y en una \hyperref[sec: h(x)]{función heurística de invención propia}.
+		
+	\subsection{Algoritmo de poda $\alpha$-$\beta$}
+		
+		A grandes rasgos, el algoritmo de poda $\alpha$-$\beta$ consiste en que, dado un nodo:
+		\begin{itemize}
+			\item Si es terminal o se ha llegado al máximo de profundidad impuesto(en caso de
+			existir; para pequeños problemas, no existe este límite), se evalúa la función
+			heurística en el nodo.
+			
+			\item Si no es terminal, se realiza la ejecución recursiva del algoritmo a cada uno
+			de sus hijos uno a uno hasta que el máximo(suponiendo que el nodo es MAX, si es
+			MIN, sería el mínimo) de los valores devueltos por sus hijos supere la cota
+			superior(respectivamente, inferior) o se hayan evaluado todos.
+		\end{itemize}
+		
+		Para la implementación de dicho algoritmo, nos hemos restringido a una profundidad en el
+		árbol de desarrollo del juego hasta profundidad 8.
+		
+	\subsection{Heurística}\label{sec: h(x)}
+		La heurística empleada como valoración de los nodos terminales consiste en que:
+		\begin{itemize}
+			\item Si nos encontramos en un tablero final, (es decir, con ganador), se tiene que:
+			\begin{itemize}
+				\item Si somos nosotros el ganador, se otorga la valoración máxima posible.
+				\item Si nuestro adversario es el ganador, se otorga la valoración mínima posible.
+			\end{itemize}
+			
+			\item Si nos encontramos en un tablero no final sin casillas libres, quiere decir que
+			es un empate, se otorga el valor neutro 0.
+			
+			\item En otro caso:
+				\begin{itemize}
+					\item Para cada ficha disponible en el tablero, buscamos qué valor tiene dicha
+					ficha mediante las funciones de comprobación y conteo que se explicarán más
+					adelante.
+					
+					\item Según la ficha que estemos explorando sea nuestra o enemiga, se procede
+					respectivamente a sumar o restar el valor que le corresponde a la ficha.
+					
+					\item El valor del tablero es la suma de todos los valores de las fichas
+					dispuestas en él que es el que será otorgado.
+				\end{itemize}
+										
+		\end{itemize}
+
+		Finalmente, se devuelve el valor otorgado, el cuál será utilizado de forma conveniente
+		por el algoritmo de poda $\alpha$-$\beta$ antes descrito.
+	
+		Para la realización de la heurística, se ha realizado la implementación de una serie de
+		funciones descritas a continuación:
+
+		\subsubsection{Funciones de comprobación y conteo}
+			Para la comprobación de las líneas en línea recta hemos subdividido el problema en 3
+			subproblemas más fáciles de implementar tanto por la sencillez de las funciones como
+			por la estructuración de los mismos.
+			
+			Los subproblemas serían líneas horizontales, verticales y diagonales.
+			
+			A \textit{grosso modo}, en cada subproblema:
+			\begin{itemize}
+				\item En cada una de las casillas desde 3 posiciones hacia atrás(para asegurarnos
+				que la ficha pertenece) hasta la posición de la ficha, buscamos en ésa y las 3
+				siguientes, dando que no hay posibilidad de poner una línea si:
+				\begin{itemize}
+					\item Alguna casilla está fuera del mapa.
+					\item Alguna casilla está ocupada por una ficha del adversario.
+				\end{itemize}
+				
+				\item Si hay posibilidad de poner una línea, contamos en cuántas casillas tenemos
+				ya puesta alguna ficha.
+				
+				\item En función del número de fichas encontradas en el paso anterior y de la
+				ponderación establecida(que se verá en el siguiente apartado), se añade un valor
+				a la puntuación que actualmente llevamos de dicho subproblema.
+				
+				\item Finalmente, se devuelve el valor del subproblema
+			\end{itemize}
+			
+			Para acabar, sumamos los valores obtenido por cada subproblema, obteniendo así el valor
+			de la casilla que nos pidieron, y lo devolvemos.
+	
+		\subsubsection{Ponderaciones}
+			Hay dos tipos de ponderaciones: Valores extremos y valoraciones del número de fichas.
+			
+			Los valores extremos son valores que sólo se pueden alcanzar si se asignan por haber
+			perdido o ganado, estos valores son -9999999999.0 y 9999999999.0, respectivamente.
+		
+			Los valores del número de fichas se adjudican por la importancia que queremos darle
+			a que salgan un número de fichas en una misma línea para obtener la victoria.
+		
+			Básicamente, los valores dados a cada una de las veces que salían 1, 2 ó 3 puntos
+			que pudiesen pertenecer a una misma línea se basa en el ensayo-error buscando obtener
+			unos valores que evitasen perder fácilmente, por ejemplo, obstruyendo una línea
+			horizontal de 3 del enemigo.
+			
+			Se han realizado pruebas con las siguientes tuplas de valores:
+			\begin{itemize}
+				\item (1,2,3)
+				\item (1, 5, 10)
+				\item (1, 10, 100)
+				\item (1, 20, 50)
+				\item (1, 20, 100)
+				\item (1, 25, 100)
+				\item (1, 25, 1000)
+				\item (1, 50, 1000)
+				\item (1, 50, 100000)
+				\item (1, 100, 1000000)
+			\end{itemize}
+			
+			Finalmente, nos hemos quedado con (1, 50, 1000) porque fue el que mejores resultados dio.
+\end{document}
